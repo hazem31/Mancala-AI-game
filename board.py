@@ -6,6 +6,7 @@ import numpy as np
 from rich.console import Console
 from rich.table import Column, Table
 
+
 class Board:
     def __init__(self,steal = False):
         self.board = np.array([[ 4 ,4 ,4 ,4 , 4 , 4] , [ 4 ,4 ,4 ,4 , 4 , 4 ] ])
@@ -39,6 +40,11 @@ class Board:
                 if player == 1:
                     self.score_1 += 1
                     value_in_cell -= 1
+                    if value_in_cell == 0:
+                        if self.check_game():
+                            return 0
+                        else:
+                            return 2
 
                     curr_row = 0
                     curr_col = 5
@@ -73,6 +79,11 @@ class Board:
                 if player == 2:
                     self.score_2 += 1
                     value_in_cell -= 1
+                    if value_in_cell == 0:
+                        if self.check_game():
+                            return 0
+                        else:
+                            return 2
                     curr_row = 1
                     curr_col = 0
                     self.board[curr_row, curr_col] += 1
@@ -102,6 +113,29 @@ class Board:
                     self.board[curr_row,curr_col] += 1
                     value_in_cell -= 1
                 continue
+
+        if self.check_game():
+            return 0
+        else:
+            return 1
+
+    def check_game(self):
+        if np.sum(self.board[0,:]) == 0:
+            for i in range(6):
+                self.score_1 += self.board[1,i]
+            self.game_still_going = False
+            self.board[1, :] = 0
+            #print('game ended')
+            return True
+
+        if np.sum(self.board[1,:]) == 0:
+            for i in range(6):
+                self.score_2 += self.board[0,i]
+            self.game_still_going = False
+            self.board[0,:] = 0
+            #print('game ended')
+            return True
+        return False
 
     def draw(self):
         table = Table(show_header=True)
