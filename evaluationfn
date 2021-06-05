@@ -33,4 +33,28 @@ def get_value1(board):
         if board.board[1,i] > (5-i):
             s += 1
 
+def traverse_tree(node, depth):
+    """ This function is a recursive function that is used to traverse the tree based on the current state,
+    where it iterates over the nodes/states, where the children of each node are the legal moves for the current state/node.
+
+    node (Node class): An object of the Node class
+
+    depth (int) : The depth of the tree
+    """
+    # Base condition: if the node is a terminal node (has no children)
+    if len(node.childs) == 0:
+        # To draw the state/board
+        node.state.draw()
+        print("value is  " , node.value)
+        print("curr depth is  " , depth)
+        return
+
+    node.state.draw()
+    print("curr depth is  ", depth)
+    for i in range(len(node.childs)):
+        traverse_tree(node.childs[i],depth+1)
+        node.state.draw()
+        print("curr depth is  ", depth)
+
+    return
     return v - s
