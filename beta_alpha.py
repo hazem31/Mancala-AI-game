@@ -4,7 +4,7 @@ def beta_alpha(node):
         return node.value
 
     curr_alpha = node.alpha   #parent alpha
-	curr_beta = node.beta     #parent beta 
+    curr_beta = node.beta     #parent beta 
 
     for n in node.childs:
         n.aplha = curr_alpha   #init alpha from parent 
