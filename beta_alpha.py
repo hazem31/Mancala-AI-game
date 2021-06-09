@@ -1,5 +1,11 @@
 
 def beta_alpha(node):
+    """ This function is used to calculate beta & alpha values for a node of the tree recursively calling it's children until all children are traversed.
+    node (Node class): An object of the Node class.
+    (int): alpha value of maximizer node or beta value of minimizer node.
+    """
+        
+        
     if len(node.childs) == 0:   #leaf node 
         return node.value
 
