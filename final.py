@@ -250,3 +250,133 @@ def traverse_tree(node, depth):
 
     return
     return v - s
+
+
+def make_tree(depth,type,board,how_to_get,level):
+    '''
+    This is a recursive function that build the tree in depth first order to a certain given
+    depth the base case for this recursive function is that if the value of depth reaches the level of the game or
+    the current node is the end of game and set a value for the leaf node
+    It starts to loop over the possible moves from current state and calls it self again on the child in depth first order
+-depth: current depth in tree
+-type of current node max or min
+-the board to start building the tree from
+-how_to_get: which play to play to reach this node
+    :param depth: current depth in tree
+    :param type: type of current node max or min
+    :param board: the board to start building the tree from
+    :param how_to_get:
+    :return:
+    '''
+
+    # base condition a leaf node just calculate evaluation function
+    if depth == level:
+        n = Node(type)
+        n.state = board
+        n.how_to_get_here = how_to_get
+        # max is player 2
+        n.value = get_value1(copy.deepcopy(board))#(n.state.score_2 - n.state.score_1) #+ (np.sum(n.state.board[0,:]) - np.sum(n.state.board[1:]))
+        return n
+
+    #if not board.game_still_going
+
+
+    node = Node(type)
+    node.state = board
+    node.how_to_get_here = how_to_get
+
+    # in case it a end node another base condition
+    if not board.game_still_going:
+        node.value = get_value1(board)
+        return node
+
+    # looping all possible moves
+    for i in range(6):
+        b1 = copy.deepcopy(node.state)
+        # if first node is max then
+        if type == 'max':
+            # try the move
+            stat = b1.play(2,i)
+            #b1.draw()
+            # if the game ended in this move
+            if stat == 0:
+                n = Node(type='min')
+                value = get_value1(copy.deepcopy(b1))
+                n.state = b1
+                n.value = value
+                n.how_to_get_here = i
+                node.childs.append(n)
+                # add this leaf node to the childs
+                continue
+            # if inavlid move
+            if stat == 3:
+                continue
+            # if the game is ok but not a play again then call function on it
+            if stat == 1:
+                n = make_tree(depth+1,'min',copy.deepcopy(b1),i,level)
+                node.childs.append(n)
+                continue
+            # if the game is ok and play again then call function on it
+            if stat == 2:
+                n = make_tree(depth + 1, 'max', copy.deepcopy(b1),i,level)
+                node.childs.append(n)
+                continue
+        else:
+            # if min node
+            stat = b1.play(1,i)
+            #b1.draw()
+            if stat == 0:
+                n = Node(type='max')
+                value = get_value1(copy.deepcopy(b1))
+                n.state = b1
+                n.value = value
+                n.how_to_get_here = i
+                node.childs.append(n)
+                continue
+            if stat == 3:
+                continue
+            if stat == 1:
+                n = make_tree(depth + 1, 'max', copy.deepcopy(b1),i,level)
+                node.childs.append(n)
+                continue
+            if stat == 2:
+                n = make_tree(depth + 1, 'min', copy.deepcopy(b1),i,level)
+                node.childs.append(n)
+                continue
+    return node 
+
+
+def beta_alpha(node):
+    """ This function is used to calculate beta & alpha values for a node of the tree recursively calling it's children until all children are traversed.
+    node (Node class): An object of the Node class.
+    (int): alpha value of maximizer node or beta value of minimizer node.
+    """
+        
+        
+    if len(node.childs) == 0:   #leaf node 
+        return node.value
+
+    curr_alpha = node.alpha   #parent alpha
+    curr_beta = node.beta     #parent beta 
+
+    for n in node.childs:
+        n.aplha = curr_alpha   #init alpha from parent 
+        n.beta = curr_beta     #init beta  from parent 
+        value = beta_alpha(n)  #returned from childs (alpha from maximizer and beta from minimizer)
+        if value is None: #cutoff happened -> no update 
+            continue
+        if node.type == 'max':    #current node is maximizer node 
+            if value > curr_alpha:  #beta of child > alpha of current 
+                curr_alpha = value   
+        else:  #current node is minimzer node 
+            if value < curr_beta: #alpha of child < beta of current 
+                curr_beta = value
+        if curr_alpha >= curr_beta: # cutoff      
+            return None
+
+    if node.type == 'max':  #maximizer return alpha 
+        node.value = curr_alpha
+    else:  #minimzer return beta
+        node.value = curr_beta
+
+    return node.value
