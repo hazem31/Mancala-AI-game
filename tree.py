@@ -33,13 +33,14 @@ class Node:
         # how to reach this state from prevoius state 
         self.how_to_get_here = None
 
-
-        def make_tree(depth,type,board,how_to_get):
+        
+        
+def make_tree(depth,type,board,how_to_get,level):
     '''
-    This is a recursive function that build the tree in depth first order to a certain given 
-    depth the base case for this recursive function is that if the value of depth reaches the level of the game or 
+    This is a recursive function that build the tree in depth first order to a certain given
+    depth the base case for this recursive function is that if the value of depth reaches the level of the game or
     the current node is the end of game and set a value for the leaf node
-    It starts to loop over the possible moves from current state and calls it self again on the child in depth first order 
+    It starts to loop over the possible moves from current state and calls it self again on the child in depth first order
 
 -depth: current depth in tree
 -type of current node max or min
@@ -47,13 +48,13 @@ class Node:
 -how_to_get: which play to play to reach this node
 
     :param depth: current depth in tree
-    :param type: type of current node max or min 
+    :param type: type of current node max or min
     :param board: the board to start building the tree from
-    :param how_to_get: 
-    :return: 
+    :param how_to_get:
+    :return:
     '''
-    
-    # base condition a leaf node just calculate evaluation function 
+
+    # base condition a leaf node just calculate evaluation function
     if depth == level:
         n = Node(type)
         n.state = board
@@ -68,8 +69,8 @@ class Node:
     node = Node(type)
     node.state = board
     node.how_to_get_here = how_to_get
-    
-    # in case it a end node another base condition 
+
+    # in case it a end node another base condition
     if not board.game_still_going:
         node.value = get_value1(board)
         return node
@@ -77,7 +78,7 @@ class Node:
     # looping all possible moves
     for i in range(6):
         b1 = copy.deepcopy(node.state)
-        # if first node is max then 
+        # if first node is max then
         if type == 'max':
             # try the move
             stat = b1.play(2,i)
@@ -95,14 +96,14 @@ class Node:
             # if inavlid move
             if stat == 3:
                 continue
-            # if the game is ok but not a play again then call function on it 
+            # if the game is ok but not a play again then call function on it
             if stat == 1:
-                n = make_tree(depth+1,'min',copy.deepcopy(b1),i)
+                n = make_tree(depth+1,'min',copy.deepcopy(b1),i,level)
                 node.childs.append(n)
                 continue
             # if the game is ok and play again then call function on it
             if stat == 2:
-                n = make_tree(depth + 1, 'max', copy.deepcopy(b1),i)
+                n = make_tree(depth + 1, 'max', copy.deepcopy(b1),i,level)
                 node.childs.append(n)
                 continue
         else:
@@ -120,11 +121,11 @@ class Node:
             if stat == 3:
                 continue
             if stat == 1:
-                n = make_tree(depth + 1, 'max', copy.deepcopy(b1),i)
+                n = make_tree(depth + 1, 'max', copy.deepcopy(b1),i,level)
                 node.childs.append(n)
                 continue
             if stat == 2:
-                n = make_tree(depth + 1, 'min', copy.deepcopy(b1),i)
+                n = make_tree(depth + 1, 'min', copy.deepcopy(b1),i,level)
                 node.childs.append(n)
                 continue
-    return node
+    return node 
