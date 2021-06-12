@@ -946,3 +946,6 @@ def start_game(board,turn2,mode,level):
                     print('new state of board after player 1 plays')
                     board.draw()
                     print('############################')
+
+                    
+play_game()  
