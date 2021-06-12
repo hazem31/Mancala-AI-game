@@ -6,4 +6,4 @@
     rich module for output console
     
    <h2> video </h2>
-   <a> https://www.youtube.com/watch?v=YYgBIYKnPfM </a>
+   <a href='https://www.youtube.com/watch?v=YYgBIYKnPfM'>  </a>
